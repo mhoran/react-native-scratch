@@ -25,14 +25,15 @@ export const KeyboardAvoidingView: React.FC<
 
   const animatedStyles = useAnimatedStyle(() => {
     if (!currentFrame.value) return {};
-    const translateY = -Math.max(
+    const paddingBottom = Math.max(
       currentFrame.value.y +
         currentFrame.value.height -
         (screenHeight - keyboard.height.value),
       0
     );
 
-    return { transform: [{ translateY }] };
+    //return { transform: [{translateY: -paddingBottom}] };
+    return { paddingBottom };
   });
 
   return (
