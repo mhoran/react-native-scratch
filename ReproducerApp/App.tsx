@@ -1,32 +1,94 @@
 import * as React from 'react';
+import {useState} from 'react';
 import {
+  FlatList,
+  Platform,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Drawer} from 'react-native-drawer-layout';
+import Animated, {FadeInRight} from 'react-native-reanimated';
 import {KeyboardAvoidingView} from './KeyboardAvoidingView';
 
+const BufferLine: React.FC<{item: unknown; index: number}> = ({index}) => {
+  return (
+    <TouchableHighlight onLongPress={() => {}}>
+      <View
+        style={{
+          backgroundColor: '#2e3440',
+          paddingVertical: 5,
+          paddingHorizontal: 10,
+          flexDirection: 'row',
+        }}>
+        <Text
+          style={{
+            fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+            color: '#eee',
+            fontSize: 14,
+          }}>
+          Message
+        </Text>
+      </View>
+    </TouchableHighlight>
+  );
+};
+
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
 export default function () {
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [showButton, setShowButton] = useState(false);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
-        <View style={styles.topbar}>
-          <View style={styles.channelsButtonWrapper}>
-            <TouchableOpacity style={styles.topbarButton}>
-              <Text style={[styles.channelsButtonText]}>#</Text>
-            </TouchableOpacity>
+        <Drawer
+          open={drawerOpen}
+          onOpen={() => setDrawerOpen(true)}
+          onClose={() => setDrawerOpen(false)}
+          renderDrawerContent={() => null}>
+          <View style={styles.topbar}>
+            <View style={styles.channelsButtonWrapper}>
+              <TouchableOpacity
+                style={styles.topbarButton}
+                onPress={() => setDrawerOpen(true)}>
+                <Text style={[styles.channelsButtonText]}>#</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <KeyboardAvoidingView style={styles.container}>
-          <ScrollView style={{flex: 1}} keyboardDismissMode="interactive" />
-          <View style={styles.bottomBox}>
-            <TextInput style={styles.inputBox} />
-          </View>
-        </KeyboardAvoidingView>
+          <KeyboardAvoidingView style={{...styles.container}}>
+            <FlatList
+              inverted
+              renderItem={({item, index}) => (
+                <BufferLine item={item} index={index} />
+              )}
+              data={Array(300)}
+              style={{flex: 1}}
+              keyboardDismissMode="interactive"
+              initialNumToRender={35}
+              maxToRenderPerBatch={35}
+              removeClippedSubviews={true}
+              windowSize={15}
+            />
+            <View style={styles.bottomBox}>
+              <TextInput
+                style={styles.inputBox}
+                onFocus={() => setShowButton(true)}
+                onBlur={() => setShowButton(false)}
+              />
+              {showButton && (
+                <Animated.View entering={FadeInRight}>
+                  <View style={{width: 40, paddingLeft: 10}} />
+                </Animated.View>
+              )}
+            </View>
+          </KeyboardAvoidingView>
+        </Drawer>
       </SafeAreaView>
     </View>
   );
@@ -55,6 +117,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 10,
+    zIndex: 1,
   },
   channelsButtonWrapper: {
     paddingLeft: 10,
