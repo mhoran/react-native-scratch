@@ -1,35 +1,89 @@
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import * as React from 'react';
 import {
   SafeAreaView,
-  ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {KeyboardAvoidingView} from './KeyboardAvoidingView';
+import {Drawer} from 'react-native-drawer-layout';
 
-export default function () {
-  return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.topbar}>
-          <View style={styles.channelsButtonWrapper}>
-            <TouchableOpacity style={styles.topbarButton}>
-              <Text style={[styles.channelsButtonText]}>#</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <KeyboardAvoidingView style={styles.container}>
-          <ScrollView style={{flex: 1}} keyboardDismissMode="interactive" />
-          <View style={styles.bottomBox}>
-            <TextInput style={styles.inputBox} />
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </View>
-  );
+const Stack = createNativeStackNavigator();
+
+const sidebar = () => {
+  return <></>;
+};
+
+export default class App extends React.PureComponent {
+  state = {
+    drawerOpen: true,
+  };
+
+  openDrawer = () => {
+    this.setState({drawerOpen: true});
+  };
+
+  closeDrawer = () => {
+    this.setState({drawerOpen: false});
+  };
+
+  render() {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="App"
+            options={{headerShown: false, gestureEnabled: false}}>
+            {() => (
+              <View style={styles.container}>
+                <SafeAreaView style={[styles.container]}>
+                  <Drawer
+                    open={this.state.drawerOpen}
+                    renderDrawerContent={sidebar}
+                    keyboardDismissMode={'on-drag'}
+                    drawerStyle={{
+                      backgroundColor: '#121212',
+                    }}
+                    onOpen={this.openDrawer}
+                    onClose={this.closeDrawer}
+                    swipeEdgeWidth={60}
+                    drawerPosition={'left'}
+                    drawerType="slide">
+                    <StatusBar
+                      barStyle="light-content"
+                      backgroundColor="transparent"
+                      translucent={true}
+                    />
+                    <View style={[styles.topbar]}>
+                      <View style={styles.channelsButtonWrapper}>
+                        <TouchableOpacity
+                          style={styles.topbarButton}
+                          onPress={this.openDrawer}>
+                          <Text
+                            style={[
+                              styles.channelsButtonText,
+                              false && {
+                                color: '#ffcf7f',
+                              },
+                            ]}>
+                            #
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                    <View style={{flex: 1}} />
+                  </Drawer>
+                </SafeAreaView>
+              </View>
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -55,6 +109,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 10,
+    zIndex: 1,
   },
   channelsButtonWrapper: {
     paddingLeft: 10,
