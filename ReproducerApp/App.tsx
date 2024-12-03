@@ -1,21 +1,21 @@
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import {
-  FlatList,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import {Drawer} from 'react-native-drawer-layout';
-import Animated, {FadeInRight} from 'react-native-reanimated';
-import {KeyboardAvoidingView} from './KeyboardAvoidingView';
+import { Drawer } from 'react-native-drawer-layout';
+import Animated, { FadeInRight } from 'react-native-reanimated';
+import { KeyboardAvoidingView } from './KeyboardAvoidingView';
 
-const BufferLine: React.FC<{item: unknown; index: number}> = ({index}) => {
+const BufferLine: React.FC = () => {
   return (
     <TouchableHighlight onLongPress={() => {}}>
       <View
@@ -62,19 +62,11 @@ export default function () {
             </View>
           </View>
           <KeyboardAvoidingView style={{...styles.container}}>
-            <FlatList
-              inverted
-              renderItem={({item, index}) => (
-                <BufferLine item={item} index={index} />
-              )}
-              data={Array(300)}
-              style={{flex: 1}}
-              keyboardDismissMode="interactive"
-              initialNumToRender={35}
-              maxToRenderPerBatch={35}
-              removeClippedSubviews={true}
-              windowSize={15}
-            />
+            <ScrollView style={{flex: 1}} keyboardDismissMode="interactive">
+              {Array.from(Array(300), (element, index) => (
+                <BufferLine key={index} />
+              ))}
+            </ScrollView>
             <View style={styles.bottomBox}>
               <TextInput
                 style={styles.inputBox}
