@@ -1,80 +1,77 @@
-import * as React from 'react';
+import {useState} from 'react';
+import {StyleSheet} from 'react-native';
 import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
   Text,
-  TextInput,
+  GestureHandlerRootView,
   TouchableOpacity,
-  View,
-} from 'react-native';
-import {KeyboardAvoidingView} from './KeyboardAvoidingView';
+} from 'react-native-gesture-handler';
 
-export default function () {
+export default function NestedText() {
+  const [counter, setCounter] = useState(0);
+
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.topbar}>
-          <View style={styles.channelsButtonWrapper}>
-            <TouchableOpacity style={styles.topbarButton}>
-              <Text style={[styles.channelsButtonText]}>#</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <KeyboardAvoidingView style={styles.container}>
-          <ScrollView style={{flex: 1}} keyboardDismissMode="interactive" />
-          <View style={styles.bottomBox}>
-            <TextInput style={styles.inputBox} />
-          </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </View>
+    <GestureHandlerRootView style={styles.container}>
+      <Text style={{fontSize: 30}}>{`Counter: ${counter}`}</Text>
+
+      <TouchableOpacity
+        onPress={() => {
+          console.log('Touchable');
+          setCounter(prev => prev + 1);
+        }}>
+        <Text>
+          <Text style={[styles.textCommon, styles.touchableText]}>
+            {'Touchable Text '}
+          </Text>
+          <Text
+            style={[styles.textCommon, styles.outerText]}
+            onPress={() => {
+              console.log('Outer text');
+              setCounter(prev => prev + 1);
+            }}>
+            {'Outer Text '}
+            <Text
+              style={[styles.textCommon, styles.innerText]}
+              onPress={() => {
+                console.log('Nested text');
+                setCounter(prev => prev + 1);
+              }}>
+              {'Nested Text'}
+            </Text>
+          </Text>
+        </Text>
+      </TouchableOpacity>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  bottomBox: {
-    paddingHorizontal: 10,
-    paddingVertical: 7.5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#333',
-  },
-  inputBox: {
-    maxHeight: 60.5,
-    padding: 5,
-    justifyContent: 'center',
-    borderColor: 'gray',
-    backgroundColor: '#fff',
-    flex: 1,
-  },
-  topbar: {
-    flexDirection: 'row',
-    backgroundColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 10,
-  },
-  channelsButtonWrapper: {
-    paddingLeft: 10,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-  },
-  topbarButton: {
-    paddingVertical: 5,
-    paddingHorizontal: 5,
-  },
-  channelsButtonText: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontFamily: 'Gill Sans',
-    color: '#eee',
-    fontWeight: 'bold',
-  },
   container: {
     flex: 1,
-    backgroundColor: '#333',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    gap: 20,
+  },
+
+  textCommon: {
+    padding: 10,
+    color: 'white',
+  },
+
+  touchableText: {
+    fontSize: 30,
+    borderWidth: 2,
+    backgroundColor: 'gray'
+  },
+
+  outerText: {
+    fontSize: 30,
+    borderWidth: 2,
+    backgroundColor: '#131313',
+  },
+
+  innerText: {
+    fontSize: 25,
+    backgroundColor: '#F06312',
   },
 });
